@@ -2,7 +2,9 @@
 
 namespace transport {
 	void TransportCatalogue::AddStop(const std::string& name, const geo::Coordinates& cord) {
-		assert(!name.empty());
+		if (name.empty()) {
+			return;
+		}
 		stops_.push_back({ name,cord });
 		stops_name_[stops_.back().name] = &stops_.back();
 
@@ -29,21 +31,21 @@ namespace transport {
 
 
 	}
-	const std::unordered_set<std::string_view>* TransportCatalogue::GetBusesForStop(std::string_view stop_name) const {
+	const std::unordered_set<std::string_view>& TransportCatalogue::GetBusesForStop(std::string_view stop_name) const {
+
+		static const std::unordered_set<std::string_view> empty_set;
 
 		auto it_s = stops_name_.find(stop_name);
 		if (it_s == stops_name_.end()) {
-			return nullptr;
+			return empty_set;
 		}
 
 		auto it_b = stop_to_buses_.find(stop_name);
-
 		if (it_b != stop_to_buses_.end()) {
-			return &(it_b->second);
+			return it_b->second;
 		}
 
-		static const std::unordered_set<std::string_view> empty;
-		return &empty;
+		return empty_set;
 
 	}
 	BusInfo TransportCatalogue::GetBusInfo(std::string_view bus_name) const {
@@ -69,6 +71,12 @@ namespace transport {
 		return { 0,0,0,0 };
 	}
 	void TransportCatalogue::SetDistance(const Stop* from, const Stop* to, int distance) {
+		if (from == nullptr || to == nullptr) {
+			return;
+		}
+		if (from->name.empty() || to->name.empty()) {
+			return;
+		}
 		distances_[{from, to}] = distance;
 	}
 

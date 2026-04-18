@@ -17,15 +17,17 @@ void PrintBus(const transport::TransportCatalogue& transport_catalogue, std::str
 
 }
 void PrintStop(const transport::TransportCatalogue& catalogue, std::string_view stop_name, std::ostream& output) {
-    const std::unordered_set<std::string_view>* buses = catalogue.GetBusesForStop(stop_name);
-    if (buses == nullptr) {
+    const transport::Stop* stop = catalogue.FindStop(stop_name);
+    if (stop == nullptr) {
         output << "Stop " << stop_name << ": not found\n";
+        return;
     }
-    else if (buses->empty()) {
+    const auto& buses = catalogue.GetBusesForStop(stop_name);
+    if (buses.empty()) {
         output << "Stop " << stop_name << ": no buses\n";
     }
     else {
-        std::vector<std::string_view> sorted(buses->begin(), buses->end());
+        std::vector<std::string_view> sorted(buses.begin(), buses.end());
         std::sort(sorted.begin(), sorted.end());
         output << "Stop " << stop_name << ": buses";
         for (std::string_view bus : sorted) {

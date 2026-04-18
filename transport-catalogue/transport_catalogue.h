@@ -45,7 +45,7 @@ namespace transport {
 		const Stop* FindStop(std::string_view name)const;
 		const Bus* FindBus(std::string_view name) const;
 		void AddBus(std::string_view name, const std::vector<const Stop*>& stops, bool circ);
-		const std::unordered_set<std::string_view>* GetBusesForStop(std::string_view stop_name) const;
+		const std::unordered_set<std::string_view>& GetBusesForStop(std::string_view stop_name) const;
 		BusInfo GetBusInfo(std::string_view stop_name) const;
 
 		void SetDistance(const Stop* from, const Stop* to, int distance);
